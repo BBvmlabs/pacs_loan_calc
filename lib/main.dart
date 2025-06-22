@@ -13,20 +13,33 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-            title: const Row(
-          children: [
-            SizedBox(width: 10),
-            Image(
-              image: AssetImage("src/assets/images/logo.png"),
-              width: 50,
-              height: 50,
+          backgroundColor: Colors.white,
+          iconTheme: const IconThemeData(color: Colors.black),
+          elevation: 2,
+          leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Image.asset(
+              'src/assets/images/logo.png',
+              fit: BoxFit.contain,
+              alignment: Alignment.center,
+              width: 40,
+              height: 40,
             ),
-            SizedBox(width: 10),
-            Text('PACS Loan Calculator'),
-            SizedBox(width: 15),
-            IconButton(onPressed: null, icon: Icon(Icons.more_vert))
+          ),
+          title: const Text(
+            'PACS Loan Calculator',
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.more_vert, color: Colors.black),
+              onPressed: () {
+                NavigationBarTheme.of(context);
+              },
+            ),
           ],
-        )),
+        ),
         body: const CalculatorScreen(),
       ),
     );

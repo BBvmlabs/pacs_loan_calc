@@ -60,7 +60,8 @@ class CustomTextInput extends StatelessWidget {
             inputFormatters: inputFormatters,
             cursorColor: Colors.black,
             decoration: InputDecoration(
-              fillColor: Colors.black,
+              filled: true,
+              fillColor: fillColor ?? Colors.white,
               hintText: hintText,
               prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
               suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
@@ -73,45 +74,47 @@ class CustomTextInput extends StatelessWidget {
   }
 }
 
-class LoanCalculatorRow extends StatefulWidget {
-  final String? label;
+class LoanCalculatorRow extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
 
-  const LoanCalculatorRow({super.key, this.label});
-
-  @override
-  State<LoanCalculatorRow> createState() => _LoanCalculatorRowState();
-}
-
-class _LoanCalculatorRowState extends State<LoanCalculatorRow> {
-  final TextEditingController amountController = TextEditingController();
+  const LoanCalculatorRow({
+    super.key,
+    required this.controller,
+    required this.label,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(
-          children: [
-            const SizedBox(height: 20),
-            const Text(
-              data: lable,
-              style: TextStyle(
+      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 130, // Fixed width for label
+            child: Text(
+              label,
+              style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
             ),
-            const SizedBox(width: 50),
-            CustomTextInput(
-              fillColor: Colors.cyan,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: CustomTextInput(
+              fillColor: Colors.cyan.shade100,
               boxHeight: 50,
-              boxWidth: 160,
-              controller: amountController,
+              controller: controller,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$'))
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d*\.?\d{0,2}$'),
+                )
               ],
-              label: "Loan Amount",
-              hintText: "Enter amount",
+              label: "", // No label inside the input now
+              hintText: "Enter $label",
               prefixIcon: Icons.currency_rupee,
               keyboardType: TextInputType.number,
               validator: (value) {
@@ -119,9 +122,9 @@ class _LoanCalculatorRowState extends State<LoanCalculatorRow> {
                 return null;
               },
             ),
-          ],
-        )
-      ]),
+          ),
+        ],
+      ),
     );
   }
 }
