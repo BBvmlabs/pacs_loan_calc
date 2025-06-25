@@ -17,7 +17,6 @@ class CustomTextInput extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Color? fillColor;
   final double? boxWidth;
-  final double? boxHeight;
 
   const CustomTextInput({
     super.key,
@@ -35,53 +34,74 @@ class CustomTextInput extends StatelessWidget {
     this.onTap,
     this.inputFormatters,
     this.fillColor,
-    this.boxHeight,
     this.boxWidth,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6.0),
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30), color: fillColor),
-          height: boxHeight,
-          width: boxWidth,
-          child: TextFormField(
-            controller: controller,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            maxLines: maxLines,
-            readOnly: readOnly,
-            onTap: onTap,
-            validator: validator,
-            onChanged: onChanged,
-            inputFormatters: inputFormatters,
-            cursorColor: Colors.black,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: fillColor ?? Colors.white,
-              hintText: hintText,
-              prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-              suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ));
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
+      validator: validator,
+      onChanged: onChanged,
+      inputFormatters: inputFormatters,
+      cursorColor: Colors.black,
+      decoration: InputDecoration(
+        filled: true,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        fillColor: fillColor ?? Colors.white,
+        hintText: hintText,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+      ),
+    );
   }
 }
+
 
 class LoanCalculatorRow extends StatelessWidget {
   final String label;
   final TextEditingController controller;
+  final String? hintText;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
+  final bool obscureText;
+  final bool readOnly;
+  final TextInputType keyboardType;
+  final int maxLines;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final VoidCallback? onTap;
+  final List<TextInputFormatter>? inputFormatters;
+  final Color? fillColor;
+  final double? boxWidth;
 
   const LoanCalculatorRow({
     super.key,
     required this.controller,
     required this.label,
+    this.hintText,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
+    this.validator,
+    this.onChanged,
+    this.onTap,
+    this.inputFormatters,
+    this.fillColor,
+    this.boxWidth,
   });
 
   @override
@@ -89,38 +109,38 @@ class LoanCalculatorRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 130, // Fixed width for label
+            width: 130,
             child: Text(
               label,
               style: const TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 16,
               ),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: CustomTextInput(
-              fillColor: Colors.cyan.shade100,
-              boxHeight: 50,
+              fillColor: fillColor ?? Colors.cyan.shade100,
               controller: controller,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^\d*\.?\d{0,2}$'),
-                )
-              ],
-              label: "", // No label inside the input now
-              hintText: "Enter $label",
-              prefixIcon: Icons.currency_rupee,
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) return "Required";
-                return null;
-              },
+              inputFormatters: inputFormatters ??
+                  [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+              label: "", // External label
+              hintText: hintText ?? "Enter $label",
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+              obscureText: obscureText,
+              readOnly: readOnly,
+              keyboardType: keyboardType,
+              maxLines: maxLines,
+              validator: validator,
+              onChanged: onChanged,
+              onTap: onTap,
+              boxWidth: boxWidth,
             ),
           ),
         ],
