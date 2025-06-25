@@ -17,6 +17,8 @@ class CustomTextInput extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Color? fillColor;
   final double? boxWidth;
+  final VoidCallback? onPrefixPressed;
+  final VoidCallback? onSuffixPressed;
 
   const CustomTextInput({
     super.key,
@@ -35,6 +37,8 @@ class CustomTextInput extends StatelessWidget {
     this.inputFormatters,
     this.fillColor,
     this.boxWidth,
+    this.onPrefixPressed,
+    this.onSuffixPressed,
   });
 
   @override
@@ -53,11 +57,26 @@ class CustomTextInput extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         fillColor: fillColor ?? Colors.white,
         hintText: hintText,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-        suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+        prefixIcon: prefixIcon != null
+            ? (onPrefixPressed != null
+                ? IconButton(
+                    icon: Icon(prefixIcon),
+                    onPressed: onPrefixPressed,
+                  )
+                : Icon(prefixIcon))
+            : null,
+        suffixIcon: suffixIcon != null
+            ? (onSuffixPressed != null
+                ? IconButton(
+                    icon: Icon(suffixIcon),
+                    onPressed: onSuffixPressed,
+                  )
+                : Icon(suffixIcon))
+            : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
           borderSide: BorderSide.none,
@@ -66,7 +85,6 @@ class CustomTextInput extends StatelessWidget {
     );
   }
 }
-
 
 class LoanCalculatorRow extends StatelessWidget {
   final String label;
@@ -84,6 +102,8 @@ class LoanCalculatorRow extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final Color? fillColor;
   final double? boxWidth;
+  final VoidCallback? onPrefixPressed;
+  final VoidCallback? onSuffixPressed;
 
   const LoanCalculatorRow({
     super.key,
@@ -102,6 +122,8 @@ class LoanCalculatorRow extends StatelessWidget {
     this.inputFormatters,
     this.fillColor,
     this.boxWidth,
+    this.onPrefixPressed,
+    this.onSuffixPressed,
   });
 
   @override
@@ -133,6 +155,8 @@ class LoanCalculatorRow extends StatelessWidget {
               hintText: hintText ?? "Enter $label",
               prefixIcon: prefixIcon,
               suffixIcon: suffixIcon,
+              onPrefixPressed: onPrefixPressed,
+              onSuffixPressed: onSuffixPressed,
               obscureText: obscureText,
               readOnly: readOnly,
               keyboardType: keyboardType,

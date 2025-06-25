@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  
   final String text;
   final VoidCallback onClicked;
   final Color buttonColor;
@@ -14,35 +12,36 @@ class CustomButton extends StatelessWidget {
   final double textSize;
   final FontWeight fontWeight;
 
-
-  const CustomButton({super.key,
-  required this.text,
-  required this.onClicked,
-  this.buttonColor = Colors.blue,
-  this.icon = Icons.add,
-  this.buttonWidth = 150,
-  this.buttonHeight = 50,
-  this.iconSize = 24,
-  this.textColor = Colors.white,
-  this.textSize = 16,
-  this.fontWeight = FontWeight.normal,
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.onClicked,
+    this.buttonColor = Colors.blue,
+    this.icon = Icons.add,
+    this.buttonWidth = 150,
+    this.buttonHeight = 50,
+    this.iconSize = 24,
+    this.textColor = Colors.white,
+    this.textSize = 16,
+    this.fontWeight = FontWeight.normal,
   });
 
   @override
   Widget build(BuildContext context) {
     return ButtonTheme(
-            child: ElevatedButton(
-              onPressed: (){}, 
-              style: ButtonStyle(
-                fixedSize: WidgetStateProperty.all<Size>(Size(buttonWidth, buttonHeight)),
-                // or
-                minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
-                backgroundColor: WidgetStateProperty.all<Color>(buttonColor),),
-                child: Text("Calculate", style: TextStyle(color: textColor, fontSize: textSize,
-                fontWeight: fontWeight )),
-              
-    )
-    );
+        child: ElevatedButton(
+      onPressed: () {},
+      style: ButtonStyle(
+        fixedSize:
+            WidgetStateProperty.all<Size>(Size(buttonWidth, buttonHeight)),
+        // or
+        minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
+        backgroundColor: WidgetStateProperty.all<Color>(buttonColor),
+      ),
+      child: Text("Calculate",
+          style: TextStyle(
+              color: textColor, fontSize: textSize, fontWeight: fontWeight)),
+    ));
   }
 }
 
@@ -51,18 +50,17 @@ class CustomIconSwitch extends StatefulWidget {
   final Icon offIcon;
   final Color onColor;
   final Color offColor;
-  
 
-  const CustomIconSwitch({super.key,
-  required this.onIcon,
-  required this.offIcon,
-  this.onColor = Colors.green,
-  this.offColor = Colors.green,
+  const CustomIconSwitch({
+    super.key,
+    required this.onIcon,
+    required this.offIcon,
+    this.onColor = Colors.green,
+    this.offColor = Colors.green,
   });
 
-
-
   @override
+  // ignore: library_private_types_in_public_api
   _CustomIconSwitchState createState() => _CustomIconSwitchState();
 }
 
