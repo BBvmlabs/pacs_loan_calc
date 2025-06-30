@@ -104,6 +104,9 @@ class LoanCalculatorRow extends StatelessWidget {
   final double? boxWidth;
   final VoidCallback? onPrefixPressed;
   final VoidCallback? onSuffixPressed;
+  final double? boxHeight;
+  final double? fontSize;
+
 
   const LoanCalculatorRow({
     super.key,
@@ -124,6 +127,9 @@ class LoanCalculatorRow extends StatelessWidget {
     this.boxWidth,
     this.onPrefixPressed,
     this.onSuffixPressed,
+    this.boxHeight,
+    this.fontSize
+
   });
 
   @override
@@ -131,16 +137,17 @@ class LoanCalculatorRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: 130,
+          Center(
+            // width: 130,
             child: Text(
+              textAlign: TextAlign.justify,
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: fontSize ?? 16,
               ),
             ),
           ),
@@ -171,4 +178,96 @@ class LoanCalculatorRow extends StatelessWidget {
       ),
     );
   }
+}
+
+
+class LoanCalculatorColumn extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
+  final String? hintText;
+  final IconData? prefixIcon;
+  final IconData? suffixIcon;
+  final bool obscureText;
+  final bool readOnly;
+  final TextInputType keyboardType;
+  final int maxLines;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
+  final VoidCallback? onTap;
+  final List<TextInputFormatter>? inputFormatters;
+  final Color? fillColor;
+  final double? boxWidth;
+  final VoidCallback? onPrefixPressed;
+  final VoidCallback? onSuffixPressed;
+  final double? fontSize;
+
+  const LoanCalculatorColumn({
+    super.key,
+    required this.controller,
+    required this.label,
+    this.hintText,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
+    this.validator,
+    this.onChanged,
+    this.onTap,
+    this.inputFormatters,
+    this.fillColor,
+    this.boxWidth,
+    this.onPrefixPressed,
+    this.onSuffixPressed,
+    this.fontSize
+  });
+
+@override
+Widget build(BuildContext context) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(
+          // width: 130,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: fontSize ?? 16,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8), // spacing between label and input
+        SizedBox(
+          width: boxWidth ?? 130,
+          child: CustomTextInput(
+            fillColor: fillColor ?? Colors.cyan.shade100,
+            controller: controller,
+            inputFormatters: inputFormatters ??
+                [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+            label: "", // External label
+            hintText: hintText ?? "Enter $label",
+            prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+            onPrefixPressed: onPrefixPressed,
+            onSuffixPressed: onSuffixPressed,
+            obscureText: obscureText,
+            readOnly: readOnly,
+            keyboardType: keyboardType,
+            maxLines: maxLines,
+            validator: validator,
+            onChanged: onChanged,
+            onTap: onTap,
+            boxWidth: boxWidth,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }

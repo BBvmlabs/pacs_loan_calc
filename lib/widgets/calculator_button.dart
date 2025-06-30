@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
-  final String text;
+  final String? text;
   final VoidCallback onClicked;
   final Color buttonColor;
-  final IconData icon;
+  final IconData? icon;
   final double buttonWidth;
   final double buttonHeight;
   final double iconSize;
@@ -14,10 +14,10 @@ class CustomButton extends StatelessWidget {
 
   const CustomButton({
     super.key,
-    required this.text,
+    this.text,
+    this.icon,
     required this.onClicked,
     this.buttonColor = Colors.blue,
-    this.icon = Icons.add,
     this.buttonWidth = 150,
     this.buttonHeight = 50,
     this.iconSize = 24,
@@ -28,22 +28,40 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ButtonTheme(
-        child: ElevatedButton(
-      onPressed: () {},
+    return ElevatedButton(
+      onPressed: onClicked,
       style: ButtonStyle(
-        fixedSize:
-            WidgetStateProperty.all<Size>(Size(buttonWidth, buttonHeight)),
-        // or
-        minimumSize: WidgetStateProperty.all<Size>(const Size(150, 50)),
+        fixedSize: WidgetStateProperty.all<Size>(
+          Size(buttonWidth, buttonHeight),
+        ),
         backgroundColor: WidgetStateProperty.all<Color>(buttonColor),
+        padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+          const EdgeInsets.symmetric(horizontal: 12.0),
+        ),
       ),
-      child: Text("Calculate",
-          style: TextStyle(
-              color: textColor, fontSize: textSize, fontWeight: fontWeight)),
-    ));
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null)
+          Icon(icon, size: iconSize, color: textColor),
+          if (icon != null && text != null) const SizedBox(width: 8),
+          if (text != null) ...[
+            Text(
+              text!,
+              style: TextStyle(
+                color: textColor,
+                fontSize: textSize,
+                fontWeight: fontWeight,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }
+
 
 class CustomIconSwitch extends StatefulWidget {
   final Icon onIcon;
