@@ -25,21 +25,22 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                child: Row(
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+                child: Table(
                   children: [
-                    Text("Loan Type",
+                  const TableRow(
+                      children: [
+                        Padding(padding: EdgeInsets.fromLTRB(0,12,12,12), child: Text("Loan Type",
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                        )),
-                    SizedBox(width: 90),
+                        ))),
                     CustomDropDown(
                       items: [
                         'Home Loan',
@@ -47,17 +48,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         'Business Loan',
                       ],
                     ),
-                  ],
-                )),
-            // const SizedBox(height: 10),
-            LoanCalculatorRow(
-              label: "Interest Percentage",
-              controller: interestController,
-              hintText: "Enter Interest",
-              suffixIcon: Icons.percent,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
+          ]),
+          TableRow(
+            children: [
+              const Padding(padding: EdgeInsets.fromLTRB(0,0,12,12), child: Text("Intrest \nPercentage",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ))),
+              CustomTextInput(controller: interestController, label: "Intrest", suffixIcon: Icons.percent,fillColor: Colors.cyan.shade100,)
+          ]),
+          ])),
+
             LoanCalculatorRow(
               label: "OD Percentage",
               controller: termController,
@@ -99,14 +102,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     textAlign: TextAlign.center)),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
+                children: [
+                const Padding(padding: EdgeInsetsGeometry.fromLTRB(20,10,10,10), child: Text(
                   "Sanctioned Date",
                   style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 15),
+                ),),
                 const CustomIconSwitch(
+                  buttonHeight: 30,
+                  buttonWidth: 50,
                   onIcon: Icon(
                     Icons.arrow_circle_right_rounded,
                     color: Color.fromARGB(255, 41, 41, 41),
@@ -116,10 +119,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     color: Color.fromARGB(255, 0, 124, 27),
                   ),
                 ),
-                const SizedBox(width: 15),
+                const SizedBox(width: 10),
                 Expanded(
                   child: CustomTextInput(
-                    boxWidth: 30,
+                    boxWidth: 70,
+                    fillColor: Colors.cyan.shade100,
                     controller: startingDateEditingcontroller,
                     label: "Interest Start Date",
                     hintText: "Start Date",
@@ -137,8 +141,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     },
                   ),
                 ),
-              ],
+          ]
             ),
+
             const SizedBox(height: 24),
             const Center(
                 child: Text(
@@ -147,14 +152,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             )),
             const SizedBox(height: 16),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
+                children: [
+                const Padding(padding: EdgeInsetsGeometry.fromLTRB(33,10,30,10), child: Text(
                   "Today Date",
                   style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 15),
+                ),),
                 const CustomIconSwitch(
+                  buttonHeight: 30,
+                  buttonWidth: 50,
                   onIcon: Icon(
                     Icons.arrow_circle_right_rounded,
                     color: Color.fromARGB(255, 41, 41, 41),
@@ -164,12 +169,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     color: Color.fromARGB(255, 0, 124, 27),
                   ),
                 ),
-                const SizedBox(width: 15),
+                const SizedBox(width: 10),
                 Expanded(
                   child: CustomTextInput(
-                    boxWidth: 30,
+                    boxWidth: 70,
+                    fillColor: Colors.cyan.shade100,
                     controller: endingDateEditingcontroller,
-                    label: "Ending Date",
+                    label: "Today Date",
                     hintText: "End Date",
                     suffixIcon: Icons.calendar_month,
                     readOnly: true, // Disable manual input
@@ -184,8 +190,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       }
                     },
                   ),
-                )
-              ],
+                ),
+          ]
             ),
             const SizedBox(height: 30),
             Center(

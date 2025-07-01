@@ -19,6 +19,7 @@ class CustomTextInput extends StatelessWidget {
   final double? boxWidth;
   final VoidCallback? onPrefixPressed;
   final VoidCallback? onSuffixPressed;
+  final double? boxHeight;
 
   const CustomTextInput({
     super.key,
@@ -39,11 +40,19 @@ class CustomTextInput extends StatelessWidget {
     this.boxWidth,
     this.onPrefixPressed,
     this.onSuffixPressed,
+    this.boxHeight,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return TextFormField(
+@override
+Widget build(BuildContext context)
+ {
+  final constrainedWidth = boxWidth ?? MediaQuery.of(context).size.width;
+  final constrainedHeight = boxHeight ?? 40;
+  return SizedBox(
+    width: constrainedWidth,
+    height: constrainedHeight, // fallback to full width if not provided
+    child: TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
@@ -82,8 +91,9 @@ class CustomTextInput extends StatelessWidget {
           borderSide: BorderSide.none,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class LoanCalculatorRow extends StatelessWidget {

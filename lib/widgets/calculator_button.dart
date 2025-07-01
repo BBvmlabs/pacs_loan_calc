@@ -68,6 +68,8 @@ class CustomIconSwitch extends StatefulWidget {
   final Icon offIcon;
   final Color onColor;
   final Color offColor;
+  final double? buttonHeight;
+  final double? buttonWidth;
 
   const CustomIconSwitch({
     super.key,
@@ -75,6 +77,8 @@ class CustomIconSwitch extends StatefulWidget {
     required this.offIcon,
     this.onColor = Colors.green,
     this.offColor = Colors.green,
+    this.buttonHeight,
+    this.buttonWidth,
   });
 
   @override
@@ -95,8 +99,8 @@ class _CustomIconSwitchState extends State<CustomIconSwitch> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: 70,
-        height: 35,
+        width: widget.buttonWidth ?? 50,
+        height: widget.buttonHeight ?? 27,
         padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),

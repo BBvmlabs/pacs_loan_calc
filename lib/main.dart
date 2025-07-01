@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pacs_loan_calc/view/calculator/calculator_result.dart';
+// import 'package:pacs_loan_calc/view/calculator/calculator_result.dart';
+import 'package:pacs_loan_calc/view/calculator/calculator_screen.dart';
 
 
 void main() {
@@ -56,7 +57,7 @@ class MainApp extends StatelessWidget {
             ),
           ],
         ),
-        body: const CalculatorResult(),
+        body: const CalculatorScreen(),
       ),
     );
   }
