@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pacs_loan_calc/view/settings/settings_screen.dart';
+import 'package:pacs_loan_calc/routes/app_routes.dart';
+import 'package:pacs_loan_calc/view/home/home_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -11,50 +12,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Colors.white,
-              iconTheme: const IconThemeData(color: Colors.black),
-              elevation: 2,
-              leading: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Image.asset(
-                  'src/assets/images/logo.png',
-                  fit: BoxFit.contain,
-                  alignment: Alignment.center,
-                  width: 40,
-                  height: 40,
-                ),
-              ),
-              title: const Text(
-                'PACS Loan Calculator',
-                style: TextStyle(color: Colors.black),
-              ),
-              centerTitle: true,
-              actions: [
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_vert, color: Colors.black),
-                  onSelected: (value) {
-                    // Handle menu selection here
-                    // Example: print(value);
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'Settings',
-                      child: Text('Settings'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'Value',
-                      child: Text('Value'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'About',
-                      child: Text('About'),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            body: const SettingsScreen()));
+      title: 'PACS Loan Calculator',
+      home: const HomeScreen(),
+      routes: routes,
+      debugShowCheckedModeBanner: false,
+    );
   }
 }

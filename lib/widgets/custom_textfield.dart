@@ -49,7 +49,7 @@ class CustomTextInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final constrainedWidth = boxWidth ?? MediaQuery.of(context).size.width;
-    final constrainedHeight = boxHeight ?? 40;
+    final constrainedHeight = boxHeight ?? 50;
     return SizedBox(
       width: constrainedWidth,
       height: constrainedHeight, // fallback to full width if not provided

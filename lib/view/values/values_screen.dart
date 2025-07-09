@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pacs_loan_calc/widgets/app_bar.dart';
 import 'package:pacs_loan_calc/widgets/calculator_button.dart';
 import 'package:pacs_loan_calc/widgets/custom_textfield.dart';
 
@@ -16,65 +17,52 @@ class _ValuesScreenState extends State<ValuesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(children: [
-      IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            size: 30,
-          )),
-      const Padding(
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            "Values",
-            style: TextStyle(
-                color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
-          )),
-      SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Wrap(
-            spacing: 10.0,
-            runSpacing: 1.0,
-            crossAxisAlignment: WrapCrossAlignment.start,
-            children: [
-              buildRow("Loan Type", TextEditingController(), "Loan Type"),
-              const SizedBox(height: 10),
-              buildTable(),
-              const SizedBox(height: 25),
-              buildRow("Loan Type", TextEditingController(), "Loan Type"),
-              const SizedBox(height: 10),
-              buildTable(),
-              const SizedBox(height: 25),
-              buildRow("Loan Type", TextEditingController(), "Loan Type"),
-              const SizedBox(height: 10),
-              buildTable(),
-              const SizedBox(height: 25),
-              Center(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                    CustomButton(
-                      onClicked: () {},
-                      textSize: 20,
-                      text: "Default",
-                      buttonColor: Colors.green.shade800,
-                      textColor: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    CustomButton(
-                      onClicked: () {},
-                      textSize: 20,
-                      textColor: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                      text: "Save",
-                      buttonColor: Colors.green.shade800,
-                    ),
-                  ])),
-            ]),
-      ),
-    ]);
+    return Scaffold(
+        appBar: buildAppBar("Values", context),
+        body: Wrap(children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Wrap(
+                spacing: 10.0,
+                runSpacing: 1.0,
+                crossAxisAlignment: WrapCrossAlignment.start,
+                children: [
+                  buildRow("Loan Type", TextEditingController(), "Loan Type"),
+                  const SizedBox(height: 10),
+                  buildTable(),
+                  const SizedBox(height: 25),
+                  buildRow("Loan Type", TextEditingController(), "Loan Type"),
+                  const SizedBox(height: 10),
+                  buildTable(),
+                  const SizedBox(height: 25),
+                  buildRow("Loan Type", TextEditingController(), "Loan Type"),
+                  const SizedBox(height: 10),
+                  buildTable(),
+                  const SizedBox(height: 25),
+                  Center(
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                        CustomButton(
+                          onClicked: () {},
+                          textSize: 20,
+                          text: "Default",
+                          buttonColor: Colors.green.shade800,
+                          textColor: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        CustomButton(
+                          onClicked: () {},
+                          textSize: 20,
+                          textColor: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          text: "Save",
+                          buttonColor: Colors.green.shade800,
+                        ),
+                      ])),
+                ]),
+          ),
+        ]));
   }
 
   Widget buildRow(

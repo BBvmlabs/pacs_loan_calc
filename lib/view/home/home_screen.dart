@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pacs_loan_calc/view/calculator/calculator_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,8 +10,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const CalculatorScreen(), // or your main screen
+      ));
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
+    return const Scaffold(
+        body: Center(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         SizedBox(height: 70),
         Image(
@@ -35,6 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
             )),
         SizedBox(height: 60),
       ]),
-    );
+    ));
   }
 }
