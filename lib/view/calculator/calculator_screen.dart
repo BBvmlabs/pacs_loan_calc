@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pacs_loan_calc/widgets/calculator_button.dart';
-import 'package:pacs_loan_calc/widgets/custom_textfield.dart';
-import 'package:pacs_loan_calc/widgets/custom_dropdown.dart';
-import 'package:pacs_loan_calc/widgets/date_picker_button.dart';
+import '../../widgets/custom_textfield.dart';
+import '../../widgets/date_picker_button.dart';
+import '../../widgets/custom_dropdown.dart';
+import '../../widgets/calculator_button.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -14,198 +14,287 @@ class CalculatorScreen extends StatefulWidget {
 class _CalculatorScreenState extends State<CalculatorScreen> {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController interestController = TextEditingController();
-  final TextEditingController termController = TextEditingController();
-  final TextEditingController monthsEditingController = TextEditingController();
-  final TextEditingController amountEditingcontroller = TextEditingController();
-  final TextEditingController startingDateEditingcontroller =
+  final TextEditingController odInterestController = TextEditingController();
+  final TextEditingController monthsController = TextEditingController();
+  final TextEditingController sanctionDateController = TextEditingController();
+  final TextEditingController interestStartDateController =
       TextEditingController();
-  final TextEditingController endingDateEditingcontroller =
-      TextEditingController(); // Added for end date
+  final TextEditingController endDateController = TextEditingController();
+
+  bool useSanctionAsStart = false;
+  bool useTodayAsEnd = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default dates
+    final today = DateTime.now();
+    final todayStr = "${today.day}/${today.month}/${today.year}";
+    endDateController.text = todayStr;
+
+    sanctionDateController.addListener(() {
+      if (!useSanctionAsStart) {
+        interestStartDateController.text = sanctionDateController.text;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                child: Table(
-                  children: [
-                  const TableRow(
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(0,12,12,12), child: Text("Loan Type",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ))),
-                    CustomDropDown(
-                      items: [
-                        'Home Loan',
-                        'Personal Loan',
-                        'Business Loan',
-                      ],
-                    ),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          sectionTitle("Loan Details"),
+          buildCard([
+            buildRow(
+                "Loan Type",
+                const CustomDropDown(items: [
+                  'Home Loan',
+                  'Personal Loan',
+                  'Business Loan',
+                  "Custom"
+                ])),
+            buildRow(
+                "Interest %",
+                CustomTextInput(
+                  fillColor: Colors.cyan.shade100,
+                  controller: interestController,
+                  label: "Interest",
+                  suffixIcon: Icons.percent,
+                )),
+            buildRow(
+                "OD %",
+                CustomTextInput(
+                  fillColor: Colors.cyan.shade100,
+                  controller: odInterestController,
+                  label: "OD Interest",
+                  suffixIcon: Icons.percent,
+                )),
+            buildRow(
+                "Months",
+                CustomTextInput(
+                  fillColor: Colors.cyan.shade100,
+                  controller: monthsController,
+                  label: "Months",
+                  suffixIcon: Icons.calendar_month,
+                  keyboardType: TextInputType.number,
+                )),
           ]),
-          TableRow(
-            children: [
-              const Padding(padding: EdgeInsets.fromLTRB(0,0,12,12), child: Text("Intrest \nPercentage",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ))),
-              CustomTextInput(controller: interestController, label: "Intrest", suffixIcon: Icons.percent,fillColor: Colors.cyan.shade100,)
+          sectionTitle("Loan Sanction Details"),
+          buildCard([
+            buildRow(
+              "Loan Amount",
+              CustomTextInput(
+                fillColor: Colors.cyan.shade100,
+                controller: amountController,
+                label: "Amount",
+                prefixIcon: Icons.currency_rupee,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  IndianCurrencyInputFormatter(),
+                ],
+              ),
+            ),
+            buildRow(
+                "Sanction Date",
+                CustomTextInput(
+                  fillColor: Colors.cyan.shade100,
+                  controller: sanctionDateController,
+                  label: "Sanction Date",
+                  hintText: "Pick Date",
+                  suffixIcon: Icons.calendar_month,
+                  readOnly: true,
+                  onSuffixPressed: () async {
+                    final picked = await showDialog<DateTime>(
+                      context: context,
+                      builder: (context) => const CustomDatePicker(),
+                    );
+                    if (picked != null) {
+                      final formatted =
+                          "${picked.day}/${picked.month}/${picked.year}";
+                      sanctionDateController.text = formatted;
+                      if (useSanctionAsStart) {
+                        interestStartDateController.text = formatted;
+                      }
+                    }
+                  },
+                )),
           ]),
-          ])),
-
-            LoanCalculatorRow(
-              label: "OD Percentage",
-              controller: termController,
-              suffixIcon: Icons.percent,
-              hintText: "Enter OD",
-              keyboardType: TextInputType.number,
+          sectionTitle("Interest Start Date"),
+          buildCard([
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Sanction Date"),
+                const SizedBox(width: 10),
+                CustomIconSwitch(
+                  value: useSanctionAsStart,
+                  onChanged: (val) {
+                    setState(() {
+                      useSanctionAsStart = val;
+                      if (!val) {
+                        // Switch is OFF: use sanction date
+                        interestStartDateController.text =
+                            sanctionDateController.text;
+                      } else {
+                        // Switch is ON: clear for custom date
+                        interestStartDateController.clear();
+                      }
+                    });
+                  },
+                  onIcon: const Icon(Icons.arrow_circle_right_rounded,
+                      color: Colors.white),
+                  offIcon: const Icon(Icons.arrow_circle_left_rounded,
+                      color: Colors.white),
+                ),
+                const SizedBox(width: 10),
+                const Text("Custom Date"),
+              ],
             ),
-            const SizedBox(height: 16),
-            LoanCalculatorRow(
-              label: "Loan Amount in\nRs.Ps",
-              controller: amountController,
-              suffixIcon: Icons.currency_rupee,
-              hintText: "Enter Loan Amount",
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            LoanCalculatorRow(
-              label: "Loan Sanctioned\nDate",
-              controller: monthsEditingController,
+            const SizedBox(height: 10),
+            CustomTextInput(
+              fillColor: Colors.cyan.shade100,
+              controller: interestStartDateController,
+              label: "Interest Start Date",
               suffixIcon: Icons.calendar_month,
-              hintText: "Enter Sanctioned Date",
+              readOnly:
+                  !useSanctionAsStart, // Switch OFF: readOnly, use sanction date
+              onSuffixPressed: useSanctionAsStart
+                  ? () async {
+                      final picked = await showDialog<DateTime>(
+                        context: context,
+                        builder: (context) => const CustomDatePicker(),
+                      );
+                      if (picked != null) {
+                        interestStartDateController.text =
+                            "${picked.day.toString().padLeft(2, '0')}/"
+                            "${picked.month.toString().padLeft(2, '0')}/"
+                            "${picked.year}";
+                      }
+                    }
+                  : null,
+              inputFormatters: [DateTextFormatter()],
               keyboardType: TextInputType.number,
-              readOnly: true, // Disable manual input
-              onSuffixPressed: () async {
-                final picked = await showDialog<DateTime>(
-                  context: context,
-                  builder: (context) => const CustomDatePicker(),
-                );
-                if (picked != null) {
-                  monthsEditingController.text =
-                      "${picked.day}/${picked.month}/${picked.year}";
-                }
-              },
             ),
-            const SizedBox(height: 32),
-            const Center(
-                child: Text("Select Interest Start Date",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center)),
-            const SizedBox(height: 16),
+          ]),
+          sectionTitle("End Date"),
+          buildCard([
             Row(
-                children: [
-                const Padding(padding: EdgeInsetsGeometry.fromLTRB(20,10,10,10), child: Text(
-                  "Sanctioned Date",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),),
-                const CustomIconSwitch(
-                  buttonHeight: 30,
-                  buttonWidth: 50,
-                  onIcon: Icon(
-                    Icons.arrow_circle_right_rounded,
-                    color: Color.fromARGB(255, 41, 41, 41),
-                  ),
-                  offIcon: Icon(
-                    Icons.arrow_circle_left_rounded,
-                    color: Color.fromARGB(255, 0, 124, 27),
-                  ),
-                ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Today"),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: CustomTextInput(
-                    boxWidth: 70,
-                    fillColor: Colors.cyan.shade100,
-                    controller: startingDateEditingcontroller,
-                    label: "Interest Start Date",
-                    hintText: "Start Date",
-                    suffixIcon: Icons.calendar_month,
-                    readOnly: true, // Disable manual input
-                    onSuffixPressed: () async {
-                      final picked = await showDialog<DateTime>(
-                        context: context,
-                        builder: (context) => const CustomDatePicker(),
-                      );
-                      if (picked != null) {
-                        startingDateEditingcontroller.text =
-                            "${picked.day}/${picked.month}/${picked.year}";
-                      }
-                    },
-                  ),
-                ),
-          ]
-            ),
+                CustomIconSwitch(
+                  value: useTodayAsEnd, // TRUE = Custom Date
+                  onChanged: (val) {
+                    setState(() {
+                      useTodayAsEnd = val;
 
-            const SizedBox(height: 24),
-            const Center(
-                child: Text(
-              "Today Date or Custom Date",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            )),
-            const SizedBox(height: 16),
-            Row(
-                children: [
-                const Padding(padding: EdgeInsetsGeometry.fromLTRB(33,10,30,10), child: Text(
-                  "Today Date",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),),
-                const CustomIconSwitch(
-                  buttonHeight: 30,
-                  buttonWidth: 50,
-                  onIcon: Icon(
-                    Icons.arrow_circle_right_rounded,
-                    color: Color.fromARGB(255, 41, 41, 41),
-                  ),
-                  offIcon: Icon(
-                    Icons.arrow_circle_left_rounded,
-                    color: Color.fromARGB(255, 0, 124, 27),
-                  ),
+                      if (!val) {
+                        final now = DateTime.now();
+                        endDateController.text =
+                            "${now.day}/${now.month}/${now.year}";
+                      } else {
+                        endDateController.clear(); // ready for custom date
+                      }
+                    });
+                  },
+                  onIcon: const Icon(Icons.arrow_circle_right_rounded,
+                      color: Colors.white),
+                  offIcon: const Icon(Icons.arrow_circle_left_rounded,
+                      color: Colors.white),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: CustomTextInput(
-                    boxWidth: 70,
-                    fillColor: Colors.cyan.shade100,
-                    controller: endingDateEditingcontroller,
-                    label: "Today Date",
-                    hintText: "End Date",
-                    suffixIcon: Icons.calendar_month,
-                    readOnly: true, // Disable manual input
-                    onSuffixPressed: () async {
+                const Text("Custom Date"),
+              ],
+            ),
+            const SizedBox(height: 10),
+            CustomTextInput(
+              fillColor: Colors.cyan.shade100,
+              controller: endDateController,
+              label: "End Date",
+              suffixIcon: Icons.calendar_month,
+              readOnly:
+                  !useTodayAsEnd, // ✅ Corrected: readOnly when using TODAY
+              onSuffixPressed: useTodayAsEnd
+                  ? () async {
                       final picked = await showDialog<DateTime>(
                         context: context,
                         builder: (context) => const CustomDatePicker(),
                       );
                       if (picked != null) {
-                        endingDateEditingcontroller.text =
-                            "${picked.day}/${picked.month}/${picked.year}";
+                        endDateController.text =
+                            "${picked.day.toString().padLeft(2, '0')}/"
+                            "${picked.month.toString().padLeft(2, '0')}/"
+                            "${picked.year}";
                       }
-                    },
-                  ),
-                ),
-          ]
+                    }
+                  : null,
+              inputFormatters: [DateTextFormatter()],
+              keyboardType: TextInputType.number,
             ),
-            const SizedBox(height: 30),
-            Center(
-                child: CustomButton(
+          ]),
+          const SizedBox(height: 30),
+          Center(
+            child: CustomButton(
               text: "Calculate",
               onClicked: () {},
               buttonWidth: 300,
               buttonHeight: 50,
-              textColor: Colors.black,
+              textColor: Colors.white,
               textSize: 20,
               fontWeight: FontWeight.bold,
-              buttonColor: const Color.fromARGB(255, 0, 82, 37),
-            )),
-          ],
+              buttonColor: Colors.green.shade800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget sectionTitle(String title) {
+    return Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 8),
+        child: Text(
+          title,
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.green.shade800),
         ));
+  }
+
+  Widget buildCard(List<Widget> children) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(children: children),
+      ),
+    );
+  }
+
+  Widget buildRow(String label, Widget widget) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+              width: 130,
+              child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(label,
+                      style: const TextStyle(fontWeight: FontWeight.w600)))),
+          const SizedBox(width: 10),
+          Expanded(child: widget),
+        ],
+      ),
+    );
   }
 }

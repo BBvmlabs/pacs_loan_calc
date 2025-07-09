@@ -17,13 +17,13 @@ class CustomButton extends StatelessWidget {
     this.text,
     this.icon,
     required this.onClicked,
-    this.buttonColor = Colors.blue,
+    this.buttonColor = const Color(0xFF2E7D32),
     this.buttonWidth = 150,
     this.buttonHeight = 50,
     this.iconSize = 24,
-    this.textColor = Colors.white,
-    this.textSize = 16,
-    this.fontWeight = FontWeight.normal,
+    this.textColor = Colors.black87,
+    this.textSize = 20,
+    this.fontWeight = FontWeight.bold,
   });
 
   @override
@@ -43,8 +43,7 @@ class CustomButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (icon != null)
-          Icon(icon, size: iconSize, color: textColor),
+          if (icon != null) Icon(icon, size: iconSize, color: textColor),
           if (icon != null && text != null) const SizedBox(width: 8),
           if (text != null) ...[
             Text(
@@ -62,8 +61,9 @@ class CustomButton extends StatelessWidget {
   }
 }
 
-
-class CustomIconSwitch extends StatefulWidget {
+class CustomIconSwitch extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
   final Icon onIcon;
   final Icon offIcon;
   final Color onColor;
@@ -73,50 +73,52 @@ class CustomIconSwitch extends StatefulWidget {
 
   const CustomIconSwitch({
     super.key,
+    required this.value,
+    required this.onChanged,
     required this.onIcon,
     required this.offIcon,
     this.onColor = Colors.green,
-    this.offColor = Colors.green,
+    this.offColor = Colors.grey,
     this.buttonHeight,
     this.buttonWidth,
   });
 
   @override
-  // ignore: library_private_types_in_public_api
-  _CustomIconSwitchState createState() => _CustomIconSwitchState();
-}
-
-class _CustomIconSwitchState extends State<CustomIconSwitch> {
-  bool isOn = false;
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          isOn = !isOn;
-        });
-      },
+      onTap: () => onChanged(!value),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        width: widget.buttonWidth ?? 50,
-        height: widget.buttonHeight ?? 27,
+        width: buttonWidth ?? 50,
+        height: buttonHeight ?? 27,
         padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: isOn ? Colors.green : const Color.fromARGB(255, 27, 26, 26),
+          color: value ? onColor : offColor,
         ),
         child: Row(
           mainAxisAlignment:
-              isOn ? MainAxisAlignment.end : MainAxisAlignment.start,
+              value ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 200),
-              child: isOn ? widget.onIcon : widget.offIcon,
+              child: value ? onIcon : offIcon,
             ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget backButton(context) {
+  return IconButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    icon: const Icon(Icons.arrow_back),
+    style: const ButtonStyle(
+        foregroundColor: WidgetStatePropertyAll<Color>(Colors.black),
+        iconSize: WidgetStatePropertyAll(25)),
+  );
 }
