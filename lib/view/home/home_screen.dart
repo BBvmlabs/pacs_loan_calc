@@ -13,6 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
+      // ignore: use_build_context_synchronously
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const CalculatorScreen(), // or your main screen
       ));

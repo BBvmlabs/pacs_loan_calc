@@ -52,11 +52,13 @@ class _ValuesScreenState extends State<ValuesScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                         CustomButton(
-                          onClicked: () {},
+                          onClicked: () {
+                            Navigator.pushNamed(context, '/edit-value');
+                          },
                           textSize: 20,
                           textColor: Colors.black87,
                           fontWeight: FontWeight.bold,
-                          text: "Save",
+                          text: "Add New",
                           buttonColor: Colors.green.shade800,
                         ),
                       ])),
@@ -83,7 +85,9 @@ class _ValuesScreenState extends State<ValuesScreen> {
           fillColor: Colors.greenAccent,
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, '/edit-value');
+          },
           icon: const Icon(
             Icons.edit,
             color: Colors.black,

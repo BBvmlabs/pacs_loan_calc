@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:pacs_loan_calc/models/loan_type.dart';
 import 'package:pacs_loan_calc/routes/app_routes.dart';
 import 'package:pacs_loan_calc/view/home/home_screen.dart';
 
-void main() {
+// void main() {
+//   runApp(const MainApp());
+// }
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Important!
+
+  final loanTypes = await LoanTypeStorage.initIfEmpty();
+
+  for (final loan in loanTypes) {
+    print('${loan.name} - ${loan.months} months @ ${loan.normalPercentage}%');
+  }
+
   runApp(const MainApp());
 }
 
