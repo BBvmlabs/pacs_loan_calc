@@ -4,12 +4,14 @@ class CustomDropDown extends StatefulWidget {
   final List<String> items;
   final Color textColor;
   final Color dropdownColor;
+  final String hintText;
 
   const CustomDropDown(
       {super.key,
       required this.items,
       this.textColor = Colors.black,
-      this.dropdownColor = Colors.white});
+      this.dropdownColor = Colors.white,
+      this.hintText = "Select"});
 
   @override
   State<CustomDropDown> createState() => _CustomDropDownState();
@@ -28,6 +30,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
   Widget build(BuildContext context) {
     return DropdownButton<String>(
       value: selectedValue,
+      hint: Text(widget.hintText, style: TextStyle(color: widget.textColor)),
       items: widget.items
           .map((item) => DropdownMenuItem<String>(
                 value: item,

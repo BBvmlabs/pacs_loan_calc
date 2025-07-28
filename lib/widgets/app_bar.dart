@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 
-AppBar buildAppBar(String title, context) {
+AppBar buildAppBar(String title, context, {bool isHome = false}) {
   return AppBar(
     backgroundColor: Colors.white,
     iconTheme: const IconThemeData(color: Colors.black),
     elevation: 2,
     leading: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(Icons.arrow_back)),
+      padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 0),
+      child: isHome
+          ? Image.asset(
+              'src/assets/images/logo.png',
+              fit: BoxFit.contain,
+              alignment: Alignment.center,
+              width: 40,
+              height: 40,
+            )
+          : IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back)),
     ),
     title: Text(
       title,
       style: const TextStyle(color: Colors.black),
     ),
-    centerTitle: true,
+    centerTitle: false,
     actions: [
       PopupMenuButton<String>(
         icon: const Icon(Icons.more_vert, color: Colors.black),

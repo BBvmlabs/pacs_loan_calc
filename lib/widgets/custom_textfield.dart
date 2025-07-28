@@ -70,6 +70,7 @@ class CustomTextInput extends StatelessWidget {
           isDense: true,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          errorStyle: const TextStyle(height: 1.2),
           fillColor: fillColor ?? Colors.white,
           hintText: hintText ?? "Enter $label",
           prefixIcon: prefixIcon != null
