@@ -40,17 +40,34 @@ class _CalculatorResultState extends State<CalculatorResult> {
   final TextEditingController loanAmountController = TextEditingController();
   final TextEditingController sancationDateController = TextEditingController();
   final TextEditingController intrestStarts = TextEditingController();
+  final TextEditingController loanEndDateController = TextEditingController();
   final TextEditingController givenDateController = TextEditingController();
-  final TextEditingController emiController = TextEditingController();
   final TextEditingController calculatedInterestDays = TextEditingController();
+  final TextEditingController calculatedInterestPerDay =
+      TextEditingController();
   final TextEditingController calculatedInterestAmount =
       TextEditingController();
-  final TextEditingController calculatedInterestOther = TextEditingController();
+  final TextEditingController reminingDaysController = TextEditingController();
+  final TextEditingController reminingPerDayAmountController =
+      TextEditingController();
+  final TextEditingController reminingAmountController =
+      TextEditingController();
+  final TextEditingController odDaysController = TextEditingController();
+  final TextEditingController odDaysPerDayInterestAmount =
+      TextEditingController();
+  final TextEditingController odDaysInterestAmount = TextEditingController();
+
+  final TextEditingController otherAmountController = TextEditingController();
   final TextEditingController totalInterestAmount = TextEditingController();
-  final TextEditingController totalAddOther = TextEditingController();
   final TextEditingController totalAmount = TextEditingController();
   final TextEditingController totaldaysController = TextEditingController();
-  final TextEditingController odDaysInterestAmount = TextEditingController();
+  final TextEditingController totalAddOther = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    otherAmountController.text = "0.0";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,49 +86,51 @@ class _CalculatorResultState extends State<CalculatorResult> {
             givenEndDate: widget.givenEndDate ?? DateTime.now(),
           );
 
-          final result_data = result.calculate();
+          final resultData = result.calculate();
 
-          loanTypeController.text = result_data['loanName'] ?? 'No Name';
-          monthTypeController.text =
-              result_data['months'].toString() ?? 'Months';
-          persentageTypeController.text =
-              result_data['interestRate'].toString() ?? 'Persentage';
-          odPersentageController.text =
-              result_data['odInterestRate'].toString() ?? 'Persentage';
-          loanAmountController.text =
-              result_data['loanAmount'].toString() ?? 'Loan Amount';
+          print(resultData);
+
+          loanTypeController.text = resultData['loanName'];
+          monthTypeController.text = resultData['months'].toString();
+          persentageTypeController.text = resultData['interestRate'].toString();
+          odPersentageController.text = resultData['odInterestRate'].toString();
+          loanAmountController.text = resultData['loanAmount'].toString();
           sancationDateController.text =
-              Datephraser(inputDate: result_data['sanctionDate'].toString())
+              Datephraser(inputDate: resultData['sanctionDate'].toString())
                   .toDdMmYyyy();
-          intrestStarts.text = Datephraser(
-                  inputDate: result_data['interestStartDate'].toString())
-              .toDdMmYyyy();
+          intrestStarts.text =
+              Datephraser(inputDate: resultData['interestStartDate'].toString())
+                  .toDdMmYyyy();
+          loanEndDateController.text =
+              Datephraser(inputDate: resultData['actualEndDate'].toString())
+                  .toDdMmYyyy();
           givenDateController.text =
-              Datephraser(inputDate: result_data['givenEndDate'].toString())
+              Datephraser(inputDate: resultData['givenEndDate'].toString())
                   .toDdMmYyyy();
           'Given Date';
-          emiController.text = result_data['emi'].toString() ?? 'EMI';
-          calculatedInterestDays.text =
-              result_data['calculatedInterestDays'].toString() ??
-                  'Calculated Interest Days';
-          calculatedInterestAmount.text =
-              result_data['calculatedInterestAmount'].toString() ??
-                  'Calculated Interest Amount';
-          calculatedInterestOther.text =
-              result_data['calculatedInterestOther'].toString() ??
-                  'Calculated Interest Other';
-          totalInterestAmount.text =
-              result_data['totalInterestAmount'].toString() ??
-                  'Total Interest Amount';
-          totalAddOther.text =
-              result_data['totalAddOther'].toString() ?? 'Total Add Other';
           totalAmount.text =
-              result_data['totalAmount'].toString() ?? 'Total Amount';
-          totaldaysController.text =
-              result_data['totaldays'].toString() ?? 'Total Days';
+              resultData['totalCalculation']["calcTotalDays"].toString();
+
+          calculatedInterestDays.text =
+              resultData["totalNormalPrinciple"]["days"].toString();
+          calculatedInterestPerDay.text =
+              resultData["totalNormalPrinciple"]["calcPerDay"].toString();
+          calculatedInterestAmount.text =
+              resultData["totalNormalPrinciple"]["calcTotalDays"].toString();
+
+          reminingDaysController.text =
+              resultData['reminingIntrest']["days"].toString();
+          reminingPerDayAmountController.text =
+              resultData['reminingIntrest']["calcPerDay"].toString();
+          reminingAmountController.text =
+              resultData['reminingIntrest']["calcTotalDays"].toString();
+          odDaysController.text = resultData['odIntrest']["days"].toString();
+          odDaysPerDayInterestAmount.text =
+              resultData['odIntrest']["calcPerDay"].toString();
           odDaysInterestAmount.text =
-              result_data['odDaysInterestAmount'].toString() ??
-                  'OD Days Interest Amount';
+              resultData['odIntrest']["calcTotalDays"].toString();
+
+          totaldaysController.text = resultData['totaldays'].toString();
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -152,7 +171,7 @@ class _CalculatorResultState extends State<CalculatorResult> {
                           prefixIcon: Icons.calendar_month_sharp),
                       buildTabelRow("Interest Start Date", intrestStarts, true,
                           prefixIcon: Icons.calendar_today_sharp),
-                      buildTabelRow("Up to Date", givenDateController, true,
+                      buildTabelRow("Given Date", givenDateController, true,
                           prefixIcon: Icons.calendar_month_sharp),
                     ]),
                     const Padding(
@@ -168,14 +187,40 @@ class _CalculatorResultState extends State<CalculatorResult> {
                         label: "Total Amount",
                         prefixIcon: Icons.currency_rupee_sharp,
                         readOnly: true),
+                    Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(children: [
+                          const Text("Normal Interest",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.green)),
+                          Text("Days - ${resultData["normalIntrest"]["days"]}"),
+                          Text(
+                              "Per Day - ${resultData["normalIntrest"]["calcPerDay"]}"),
+                          Text(
+                              "Intrest Amount - ${resultData["normalIntrest"]["calcTotalDays"]}"),
+                          Text(
+                              "Loan Amount - ${resultData["loanAmount"] + resultData["normalIntrest"]["calcTotalDays"]}"),
+                          Text(
+                              "Actual End Date - ${Datephraser(inputDate: resultData["actualEndDate "]).toDdMmYyyy()}"),
+                        ]),
+                      ),
+                    ),
+                    Text(
+                      "Actual Loan Calculation Days - ${resultData["normalIntrest"]["days"].toString()} days, Amount - ${resultData["normalIntrest"]["calcTotalDays"].toString()} Rs, Per Day - ${resultData["normalIntrest"]["calcPerDay"].toString()} Rs",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     Table(
                       children: [
                         TableRow(
                           children: [
                             buildRowText(""),
                             buildRowText("Normal"),
+                            buildRowText("Remining"),
                             buildRowText("OD"),
-                            buildRowText("Total"),
                           ],
                         ),
                         TableRow(
@@ -183,24 +228,45 @@ class _CalculatorResultState extends State<CalculatorResult> {
                             buildRowText("Days"),
                             buildRowWidgets(
                                 "Normal",
-                                calculatedInterestAmount,
+                                calculatedInterestDays,
+                                Colors.greenAccent,
+                                Icons.calendar_today_rounded,
+                                null),
+                            buildRowWidgets(
+                                "Remining",
+                                reminingDaysController,
                                 Colors.greenAccent,
                                 Icons.calendar_today_rounded,
                                 null),
                             buildRowWidgets(
                                 "OD",
-                                odDaysInterestAmount,
-                                Colors.greenAccent,
-                                Icons.calendar_today_rounded,
-                                null),
-                            buildRowWidgets(
-                                "Total",
-                                totaldaysController,
+                                odDaysController,
                                 Colors.greenAccent,
                                 Icons.calendar_today_rounded,
                                 null),
                           ],
                         ),
+                        TableRow(children: [
+                          buildRowText("Rs/Day"),
+                          buildRowWidgets(
+                              "Normal",
+                              calculatedInterestPerDay,
+                              Colors.greenAccent,
+                              Icons.currency_rupee_sharp,
+                              null),
+                          buildRowWidgets(
+                              "Remining",
+                              reminingPerDayAmountController,
+                              Colors.greenAccent,
+                              Icons.currency_rupee_sharp,
+                              null),
+                          buildRowWidgets(
+                              "Od",
+                              odDaysPerDayInterestAmount,
+                              Colors.greenAccent,
+                              Icons.currency_rupee_sharp,
+                              null)
+                        ]),
                         TableRow(
                           children: [
                             buildRowText("Amount"),
@@ -211,14 +277,14 @@ class _CalculatorResultState extends State<CalculatorResult> {
                                 Icons.currency_rupee_sharp,
                                 null),
                             buildRowWidgets(
-                                "OD",
-                                odDaysInterestAmount,
+                                "Remining",
+                                reminingAmountController,
                                 Colors.greenAccent,
                                 Icons.currency_rupee_sharp,
                                 null),
                             buildRowWidgets(
-                                "Total",
-                                totalInterestAmount,
+                                "Od",
+                                odDaysInterestAmount,
                                 Colors.greenAccent,
                                 Icons.currency_rupee_sharp,
                                 null)
@@ -239,15 +305,28 @@ class _CalculatorResultState extends State<CalculatorResult> {
                                   fontWeight: FontWeight.bold, fontSize: 16),
                             ),
                             CustomTextInput(
-                              controller: calculatedInterestOther,
+                              controller: otherAmountController,
                               label: "Others",
                               fillColor: Colors.greenAccent,
-                              boxWidth: 90,
+                              boxWidth: 100,
                               keyboardType: TextInputType.number,
                               prefixIcon: Icons.currency_rupee_sharp,
                             ),
                             CustomButton(
-                              onClicked: () {},
+                              onClicked: () {
+                                setState(() {
+                                  // totalAmount.clear();
+                                  double total =
+                                      double.tryParse(totalAmount.text) ?? 0.0;
+                                  double others = double.tryParse(
+                                          otherAmountController.text) ??
+                                      0.0;
+
+                                  totalAddOther.text =
+                                      (total + others).toString();
+                                  print("Button Clicked ${totalAddOther.text}");
+                                });
+                              },
                               text: "Total + Others",
                               buttonColor: Colors.green,
                               buttonWidth: 130,
@@ -257,7 +336,7 @@ class _CalculatorResultState extends State<CalculatorResult> {
                           ]),
                     ),
                     LoanCalculatorRow(
-                      controller: totalAmount,
+                      controller: totalAddOther,
                       label: "Final Amount",
                       readOnly: true,
                       fontSize: 20,
@@ -307,7 +386,7 @@ class _CalculatorResultState extends State<CalculatorResult> {
                                     odDaysInterestAmount.clear();
                                     totaldaysController.clear();
                                     totalInterestAmount.clear();
-                                    calculatedInterestOther.clear();
+                                    otherAmountController.clear();
                                     totalAmount.clear();
                                   });
                                   Navigator.pop(context);

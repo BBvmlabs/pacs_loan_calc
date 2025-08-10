@@ -66,6 +66,18 @@ class LoanCalculationInput {
       "calcTotalDays": 0
     };
 
+    Map<String, dynamic> totalNormalPrinciple = {
+      "days": 0,
+      "calcPerDay": 0,
+      "calcTotalDays": 0
+    };
+
+    Map<String, dynamic> totalIntrestPrinciple = {
+      "days": 0,
+      "calcPerDay": 0,
+      "calcTotalDays": 0
+    };
+
     if (daysDict["daysMap"]["reminingDays"] != 0) {
       intrestPrinciple = _interestCalculation(
           principal, odInterestRate, daysDict["daysMap"]["reminingDays"]);
@@ -76,7 +88,44 @@ class LoanCalculationInput {
           principal, odInterestRate, daysDict["daysMap"]["odiDays"]);
     }
 
+    if (daysDict["daysMap"]["loanActiveDays"] != 0 &&
+        daysDict["daysMap"]["reminingDays"] != 0 &&
+        daysDict["daysMap"]["odiDays"] == 0) {
+      totalNormalPrinciple = _interestCalculation(
+          principal,
+          interestRate,
+          daysDict["daysMap"]["loanActiveDays"] +
+              daysDict["daysMap"]["odiDays"]);
+
+      totalIntrestPrinciple["days"] =
+          totalPrinciple["days"] + odIntrestPrinciple["days"];
+      totalIntrestPrinciple["calcPerDay"] =
+          totalPrinciple["calcPerDay"] + odIntrestPrinciple["calcPerDay"];
+      totalIntrestPrinciple["calcTotalDays"] = loanAmount +
+          totalNormalPrinciple["calcTotalDays"] +
+          odIntrestPrinciple["calcTotalDays"];
+    }
+
+    if (daysDict["daysMap"]["loanActiveDays"] != 0 &&
+        daysDict["daysMap"]["reminingDays"] == 0 &&
+        daysDict["daysMap"]["odiDays"] != 0) {
+      totalNormalPrinciple = _interestCalculation(
+          principal,
+          interestRate,
+          daysDict["daysMap"]["loanActiveDays"] +
+              daysDict["daysMap"]["odiDays"]);
+
+      totalIntrestPrinciple["days"] =
+          totalPrinciple["days"] + odIntrestPrinciple["days"];
+      totalIntrestPrinciple["calcPerDay"] =
+          totalPrinciple["calcPerDay"] + odIntrestPrinciple["calcPerDay"];
+      totalIntrestPrinciple["calcTotalDays"] = loanAmount +
+          totalNormalPrinciple["calcTotalDays"] +
+          odIntrestPrinciple["calcTotalDays"];
+    }
+
     return {
+      "loanName": loanName,
       "loanAmount": loanAmount,
       "interestRate": interestRate,
       "odInterestRate": odInterestRate,
@@ -85,11 +134,13 @@ class LoanCalculationInput {
       "interestStartDate": interestStartDate,
       "givenEndDate": givenEndDate,
       "daysMap": daysDict["daysMap"],
-      "totalPrinciple": totalPrinciple,
-      "intrestPrinciple": intrestPrinciple,
-      "odIntrestPrinciple": odIntrestPrinciple,
+      "normalIntrest": totalPrinciple,
+      "reminingIntrest": intrestPrinciple,
+      "odIntrest": odIntrestPrinciple,
       "actualEndDate": daysDict["loanEndDate"],
       "activeMonths": daysDict["monthsActive"],
+      "totalNormalPrinciple": totalNormalPrinciple,
+      "totalCalculation": totalIntrestPrinciple
     };
   }
 
